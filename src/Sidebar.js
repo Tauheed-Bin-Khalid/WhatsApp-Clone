@@ -45,7 +45,8 @@ export default function Sidebar() {
     <div className="sidebar">
     {/* {..header} */}
     <div className="sidebarHeader" >
-        <div onClick={logOut}>
+     
+        <div onClick={logOut} style={{ border:"2px solid silver ",borderRadius:"7px"}}>
           <span style={{display:"flex", borderRadius:"7px"}} >
           <img src={user.photoURL} alt="" style={{borderRadius:"7px", marginRight:"2px"}}/>
             <h3>{user.displayName}</h3>

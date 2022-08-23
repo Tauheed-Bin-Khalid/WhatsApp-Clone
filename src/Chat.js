@@ -1,10 +1,11 @@
-import React,{useEffect, useState,useContext} from 'react'
+import React,{useEffect, useState,useContext,useRef} from 'react'
 import "./Chat.css"
 import {useParams} from "react-router-dom";
 import {db} from "./firebase";
-import {addDoc, collection,doc,onSnapshot, orderBy, query, serverTimestamp} from "firebase/firestore";
+import {addDoc, collection,doc,onSnapshot, orderBy, query, serverTimestamp, deleteDoc} from "firebase/firestore";
 import { LoginContext } from './LoginContext';
 export default function Chat() {
+    const bottomRef = useRef(null);
     const {groupId} = useParams();
     const [groupName, setGroupName]= useState();
     const [input, setInput]= useState("");
@@ -12,7 +13,16 @@ export default function Chat() {
     const{user} = useContext( LoginContext)
     const a = user.displayName;
 
+    const deleteGroup=async()=>{
+        const d =await deleteDoc(doc(db, "groups", groupId));
+    }
+    useEffect(() => {
+        // 👇️ scroll to bottom every time messages change
+        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+      }, [messages]);
+
     useEffect(()=>{
+
         if(groupId){
             const getGroup = onSnapshot(doc(db,"groups",groupId),(doc)=>{
                     setGroupName(doc.data().name)
@@ -72,9 +82,9 @@ export default function Chat() {
                     attach_file
                 </span>
                 </button>
-                <button style={{border:"none"}}>
+                <button onClick={deleteGroup} style={{border:"none"}}>
                 <span className="material-symbols-outlined">
-                    more_vert
+                    delete
                 </span>
                 </button> 
             </div>
@@ -93,6 +103,7 @@ export default function Chat() {
 
                 )
                 })}
+                <div ref={bottomRef} />
                 
                
             </div>
